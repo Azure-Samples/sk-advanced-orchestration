@@ -19,6 +19,7 @@ from team import Team
 import logging
 
 logger = logging.getLogger(__name__)
+logging.getLogger("semantic_kernel").setLevel(logging.WARN)
 
 
 def create_team():

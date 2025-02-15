@@ -45,7 +45,7 @@ class Team(Agent):
         **kwargs: Any,
     ) -> AsyncIterable[ChatMessageContent]:
         channel = await self.create_channel()
-        channel.receive(history.messages)
+        await channel.receive(history.messages)
 
         for _ in range(self.termination_strategy.maximum_iterations):
             try:
