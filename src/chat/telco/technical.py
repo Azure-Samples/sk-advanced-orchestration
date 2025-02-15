@@ -32,6 +32,7 @@ technical_agent_kernel.add_plugin(TechnicalAgentPlugin, plugin_name="TechnicalAg
 technical_agent = ChatCompletionAgent(
     description="A technical support agent that can answer technical questions",
     id="technical",
+    name="TechnicalSupport",
     kernel=technical_agent_kernel,
     instructions="""You are a technical support agent that responds to customer inquiries.
     

@@ -4,6 +4,7 @@ from basic_kernel import create_kernel
 sales_agent = ChatCompletionAgent(
     description="A sales agent that can answer sales questions",
     id="sales",
+    name="Sales",
     kernel=create_kernel(),
     instructions="""
 You are a sales person that responds to customer inquiries.
