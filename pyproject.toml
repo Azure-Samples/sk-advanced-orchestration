@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "azure-identity>=1.20.0",
+    "chainlit>=2.2.1",
+    "invoke>=2.2.0",
     "ipykernel>=6.29.5",
     "python-dotenv>=1.0.1",
     "semantic-kernel>=1.21.1",

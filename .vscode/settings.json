@@ -1,0 +1,11 @@
+{
+    "python.terminal.activateEnvironment": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.unusedImports": "always"
+        }
+    }
+}
