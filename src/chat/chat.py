@@ -5,7 +5,6 @@ load_dotenv(override=True)
 import chainlit as cl
 
 from semantic_kernel.agents import AgentGroupChat
-from semantic_kernel.contents import ChatMessageContent, AuthorRole
 from semantic_kernel.contents import ChatHistory
 
 from speaker_election_strategy import SpeakerElectionStrategy
@@ -76,14 +75,10 @@ async def on_message(message: cl.Message):
     #         await cl.Message(content=result.content, author=result.name).send()
     history: ChatHistory = cl.user_session.get("history")
 
-    history.add_message(
-        ChatMessageContent(
-            role=AuthorRole.USER,
-            content=message.content,
-        )
-    )
+    history.add_user_message(message.content)
 
     async for result in team.invoke(history=history):
+        logger.info(f"Result: {result}")
         if "PAUSE" not in result.content:
             await cl.Message(content=result.content, author=result.name).send()
 

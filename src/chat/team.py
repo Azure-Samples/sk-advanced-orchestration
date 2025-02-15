@@ -57,7 +57,7 @@ class Team(Agent):
                 raise AgentChatException("Failed to select agent") from ex
 
             async for is_visible, message in channel.invoke(selected_agent):
-                history.messages.append(message)
+                history.add_message(message)
                 if message.role == AuthorRole.ASSISTANT:
                     task = self.termination_strategy.should_terminate(
                         selected_agent, history.messages
