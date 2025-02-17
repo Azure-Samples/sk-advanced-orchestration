@@ -44,14 +44,20 @@ class Team(Agent):
         kernel: "Kernel | None" = None,
         **kwargs: Any,
     ) -> AsyncIterable[ChatMessageContent]:
+        # In case the agent is invoked multiple times
+        self.is_complete = False
+
+        # Channel required to communicate with agents
         channel = await self.create_channel()
         await channel.receive(history.messages)
 
+        # TODO: check if it makes sense to have a termination strategy here
         for _ in range(self.termination_strategy.maximum_iterations):
             try:
                 selected_agent = await self.selection_strategy.next(
                     self.agents, history.messages
                 )
+            # TODO: possible handle a case when no agent is selected
             except Exception as ex:
                 logger.error(f"Failed to select agent: {ex}")
                 raise AgentChatException("Failed to select agent") from ex
@@ -78,4 +84,27 @@ class Team(Agent):
         kernel: "Kernel | None" = None,
         **kwargs: Any,
     ) -> AsyncIterable[StreamingChatMessageContent]:
-        raise NotImplementedError("Stream invocation is not supported for Team agent")
+        # TODO REVIEW!!
+
+        # Channel required to communicate with agents
+        channel = await self.create_channel()
+        await channel.receive(history.messages)
+
+        # TODO: check if it makes sense to have a termination strategy here
+        for _ in range(self.termination_strategy.maximum_iterations):
+            try:
+                selected_agent = await self.selection_strategy.next(
+                    self.agents, history.messages
+                )
+            # TODO: possible handle a case when no agent is selected
+            except Exception as ex:
+                logger.error(f"Failed to select agent: {ex}")
+                raise AgentChatException("Failed to select agent") from ex
+
+            messages: list[ChatMessageContent] = []
+
+            async for message in channel.invoke_stream(selected_agent, messages):
+                yield message
+
+            for message in messages:
+                history.messages.append(message)
