@@ -18,10 +18,10 @@ from semantic_kernel.functions.kernel_arguments import KernelArguments
 from semantic_kernel.agents.channels.agent_channel import AgentChannel
 from semantic_kernel.agents.channels.chat_history_channel import ChatHistoryChannel
 
-from chat.feedback_strategy import FeedbackStrategy
-from chat.planning_strategy import PlanningStrategy
+from feedback_strategy import FeedbackStrategy
+from planning_strategy import PlanningStrategy
 
-logger: logging.Logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PlannedTeam(Agent):
@@ -90,6 +90,7 @@ class PlannedTeam(Agent):
     ) -> AsyncIterable[StreamingChatMessageContent]:
         # In case the agent is invoked multiple times
         self.is_complete = False
+        feedback: str = ""
 
         # Channel required to communicate with agents
         channel = await self.create_channel()
@@ -97,7 +98,7 @@ class PlannedTeam(Agent):
 
         while not self.is_complete:
             plan = await self.planning_strategy.create_plan(
-                self.agents, history.messages
+                self.agents, history.messages, feedback
             )
 
             for step in plan.plan:

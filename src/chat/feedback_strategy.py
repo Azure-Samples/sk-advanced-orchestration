@@ -15,7 +15,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 @experimental_class
 class FeedbackStrategy(KernelBaseModel):
-    """A strategy for determining when a PlannedTeam should terminate, and provide feedback to reiterate the plan if needed."""
+    """A strategy for determining when a Planned Team should terminate, and provide feedback to reiterate the plan if needed."""
 
     kernel: Kernel
 
@@ -31,8 +31,18 @@ class FeedbackResponse(KernelBaseModel):
 
 
 @experimental_class
+class DefaultFeedbackStrategy(FeedbackStrategy):
+    """A simple feedback strategy that always returns False and an empty string."""
+
+    async def provide_feedback(
+        self, history: list["ChatMessageContent"]
+    ) -> tuple[bool, str]:
+        return True, ""
+
+
+@experimental_class
 class KernelFunctionFeedbackStrategy(FeedbackStrategy):
-    """A strategy for determining when a PlannedTeam should terminate, and provide feedback to reiterate the plan if needed."""
+    """A strategy for determining when a Planned Team should terminate, and provide feedback to reiterate the plan if needed."""
 
     kernel: Kernel
     function: KernelFunction

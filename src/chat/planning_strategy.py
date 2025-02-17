@@ -36,7 +36,7 @@ class PlanningStrategy(KernelBaseModel, ABC):
     """Base strategy class for selecting the next agent in a chat."""
 
     history_reducer: ChatHistoryReducer | None = None
-    include_tools_descriptions: bool = (False,)
+    include_tools_descriptions: bool = False
 
     async def create_plan(
         self,
@@ -115,12 +115,12 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
         execution_settings["response_format"] = TeamPlan
 
         input_prompt = prompt.format(
-            agents=agents_info, history=messages, feedback=feedback
+            agents=agents_info, inquiry=messages[-1]["content"], feedback=feedback
         )
-        function = KernelFunctionFromPrompt(
+        kfunc = KernelFunctionFromPrompt(
             function_name="CreatePlan", prompt=input_prompt
         )
-        result = await function.invoke(
+        result = await kfunc.invoke(
             kernel=self.kernel,
             arguments=arguments,
             execution_settings=execution_settings,

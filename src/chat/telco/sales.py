@@ -1,37 +1,78 @@
-from semantic_kernel.agents import ChatCompletionAgent
+# filepath: c:\Users\ricchi\Repos\mas-sk-quickstart\src\chat\telco\sales.py
+from typing import Annotated
+import json
+from semantic_kernel.functions import kernel_function
 from basic_kernel import create_kernel
+from semantic_kernel.agents import ChatCompletionAgent
+
+
+class SalesAgentPlugin:
+    def __init__(self):
+        # Offers data with internal fields (starting with '_') that should not be shared with the customer.
+        self.offers = {
+            "Mobile Internet": {
+                "Description": "Mobile WiFi for you to take anywhere, supports up to 10 devices.",
+                "Price": "€10/month",
+                "Details": "100GB data included, €1/GB after that.",
+                "_SKU": "INET_MOBILE",
+            },
+            "Large Data Plan": {
+                "Description": "High data plan for heavy users.",
+                "Price": "€20/month",
+                "Details": "250GB data included, €0.50/GB after that.",
+                "_SKU": "INET_LARGE",
+            },
+            "Extra Large Data Plan": {
+                "Description": "Unlimited data plan for power users.",
+                "Price": "€50/month",
+                "Details": "Unlimited data at 4G speeds.",
+                "_SKU": "INET_XLARGE",
+            },
+            "All-in-One Bundle": {
+                "Description": "Mobile internet and home internet in one package.",
+                "Price": "€45/month",
+                "Details": "10GB mobile data, €1/GB after that. Home internet included.",
+                "_SKU": "INET_BUNDLE",
+            },
+            "Home Internet": {
+                "Description": "High-speed internet for your home.",
+                "Price": "€30/month",
+                "Details": "Unlimited data at 1Gbps.",
+                "_SKU": "INET_HOME",
+            },
+        }
+
+    @kernel_function
+    def get_offers(
+        self,
+    ) -> Annotated[str, "Returns available sales offers without internal fields"]:
+        # Filter out internal fields starting with '_'
+        offers_public = {}
+        for offer, details in self.offers.items():
+            offers_public[offer] = {
+                k: v for k, v in details.items() if not k.startswith("_")
+            }
+        return json.dumps(offers_public)
+
+
+sales_agent_kernel = create_kernel()
+sales_agent_kernel.add_plugin(SalesAgentPlugin, plugin_name="SalesAgent")
 
 sales_agent = ChatCompletionAgent(
-    description="A sales agent that can answer sales questions",
+    description="A sales agent that can answer sales questions, provide offers, and process sales requests",
     id="sales",
     name="Sales",
-    kernel=create_kernel(),
+    kernel=sales_agent_kernel,
     instructions="""
 You are a sales person that responds to customer inquiries.
     
-    You have access to pricing and product details in the PRODUCTS sections below. Please note field starting with "_" are not to be shared with the Customer.
+You have access to sales offers provided by the SalesAgent plugin.
     
-    Your tasks are:
-    - provide the Customer with the information they need. Try to be specific and provide the customer only options that fit their needs.
+Your tasks are:
+- Provide the Customer with the information they need. Try to be specific and provide options that fit their needs.
     
-    IMPORTANT NOTES:
-    - DO act politely and professionally
-    - NEVER provide false information
-    
-    ### PRODUCTS
-    - Mobile Internet
-        - Description: Mobile WiFi for you to take anywhere, supports up to 10 devices.
-        - Price: €10/month
-        - Details: 10GB data included, €1/GB after that.
-        - _SKU: INET_MOBILE
-    - All-in-One Bundle
-        - Description: Mobile internet and home internet in one package.
-        - Price: €45/month
-        - Details: 10GB mobile data, €1/GB after that. Home internet included.
-        - _SKU: INET_BUNDLE
-    - Home Internet
-        - Description: High-speed internet for your home.
-        - Price: €30/month
-        - Details: Unlimited data at 1Gbps.
-        - _SKU: INET_HOME""",
+IMPORTANT NOTES:
+- DO act politely and professionally.
+- NEVER provide false information.
+    """,
 )

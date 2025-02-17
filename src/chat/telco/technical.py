@@ -10,7 +10,14 @@ class TechnicalAgentPlugin:
         service_sku: Annotated[str, "The SKU of the service to check status for"]
     ) -> Annotated[str, "Status of the specified service"]:
 
-        return "Service degraded"
+        if service_sku == "INET_MOBILE":
+            return "Service operational"
+        elif service_sku == "INET_BUNDLE":
+            return "Service degraded due to high traffic"
+        elif service_sku == "INET_HOME":
+            return "Service operational with occasional slow speeds"
+        else:
+            return "Invalid service SKU"
 
     @kernel_function
     def check_customer_telemetry(
@@ -21,7 +28,37 @@ class TechnicalAgentPlugin:
         customerCode: Annotated[str, "The customer code to check telemetry for"],
     ) -> Annotated[str, "Telemetry summary for the specified customer"]:
 
-        return "No issues detected"
+        if service_sku == "INET_MOBILE":
+            base_telemetry = f"Customer {customerCode}: Mobile telemetry indicates strong signal with no issues."
+        elif service_sku == "INET_BUNDLE":
+            base_telemetry = f"Customer {customerCode}: Bundle telemetry shows slight latency but overall stable connection."
+        elif service_sku == "INET_HOME":
+            base_telemetry = (
+                f"Customer {customerCode}: Home telemetry reports optimal performance."
+            )
+        else:
+            base_telemetry = f"Customer {customerCode}: Unknown service SKU provided."
+
+        # Extra logic based on customerCode
+        # Check for VIP customers (codes starting with 'VIP') for priority notices
+        if customerCode.startswith("VIP"):
+            extra_message = " Priority support activated."
+        else:
+            extra_message = ""
+
+        # Use numeric parts of the customerCode to determine additional status
+        digits = "".join(filter(str.isdigit, customerCode))
+        if digits:
+            if int(digits) % 2 == 0:
+                digit_message = " Even numbered customer code detected: eligible for a special discount."
+            else:
+                digit_message = (
+                    " Odd numbered customer code: standard support protocols applied."
+                )
+        else:
+            digit_message = " No numeric identifier found in customer code; default support levels apply."
+
+        return base_telemetry + extra_message + digit_message
 
 
 technical_agent_kernel = create_kernel()
