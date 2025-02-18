@@ -1,5 +1,5 @@
 from semantic_kernel.agents import ChatCompletionAgent
-from basic_kernel import create_kernel
+from sk_ext.basic_kernel import create_kernel
 
 user_agent = ChatCompletionAgent(
     id="user_agent",

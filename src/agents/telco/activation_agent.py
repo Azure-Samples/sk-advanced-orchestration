@@ -4,7 +4,7 @@ import os
 import logging
 
 from semantic_kernel.agents import ChatCompletionAgent
-from basic_kernel import create_kernel
+from sk_ext.basic_kernel import create_kernel
 from semantic_kernel.functions import kernel_function
 from typing import Annotated, Optional
 

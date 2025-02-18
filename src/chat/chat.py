@@ -4,9 +4,18 @@ load_dotenv(override=True)
 
 import chainlit as cl
 
-from semantic_kernel.contents import ChatHistory
+from dapr.actor import ActorInterface, actormethod, ActorProxy, ActorId
+from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
-from telco.telco_team import team
+
+class SKAgentActorInterface(ActorInterface):
+    @actormethod(name="invoke")
+    async def invoke(self, input_message: str) -> list[dict]: ...
+
+    @actormethod(name="get_history")
+    async def get_history(self) -> dict: ...
+
+
 import logging
 
 # import debugpy
@@ -14,20 +23,7 @@ import logging
 # debugpy.listen(("localhost", 5678))
 
 logger = logging.getLogger(__name__)
-logging.getLogger("semantic_kernel").setLevel(logging.WARN)
-logging.getLogger("chat").setLevel(logging.DEBUG)
-
-
-def create_history():
-    cl.user_session.set("history", ChatHistory())
-
-
-@cl.on_chat_start
-async def on_start():
-    """
-    This function is called when the chat is started.
-    """
-    create_history()
+logger.setLevel(logging.DEBUG)  # Ensure logging level is set as required
 
 
 @cl.on_message
@@ -35,13 +31,16 @@ async def on_message(message: cl.Message):
     """
     This function is called when a message is received from the user.
     """
-    history: ChatHistory = cl.user_session.get("history")
+    session_id = cl.user_session.get("id")
+    proxy: SKAgentActorInterface = ActorProxy.create(
+        actor_type="SKAgentActor",
+        actor_id=ActorId(session_id),
+        actor_interface=SKAgentActorInterface,
+    )
 
-    history.add_user_message(message.content)
-
-    async for result in team.invoke(history=history):
-        logger.info(f"Result: {result}")
-        if "PAUSE" not in result.content:
-            await cl.Message(content=result.content, author=result.name).send()
-
-    cl.user_session.set("history", history)
+    results = await proxy.invoke(message.content)
+    for result in results:
+        response = ChatMessageContent.model_validate(result)
+        logger.debug(f"Received result from agent: {result}")
+        if "PAUSE" not in response.content:
+            await cl.Message(content=response.content, author=response.name).send()

@@ -1,5 +1,5 @@
 from typing import Annotated
-from basic_kernel import create_kernel
+from sk_ext.basic_kernel import create_kernel
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai import (
     FunctionChoiceBehavior,
