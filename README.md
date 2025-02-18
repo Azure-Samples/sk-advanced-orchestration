@@ -1,57 +1,26 @@
-# Project Name
+# Semantic Kernel Agentic Call Center
 
-(short, 1-3 sentenced, description of the project)
+This project is a call center application that uses a semantic kernel to understand the intent of the caller and route the call to the appropriate agent, levering a smarter `SelectionStrategy` and featuring _nested_ `Teams` and `Agents` for more complex routing scenarios. It also includes a special kind of
+`Agent` that constructs a `PlannedTeam` where more complex asks are turned into a multi-step process.
+
+The overall architecture includes Dapr to enable _Virtual Actor pattern_, in order to host the agentic team and natively handle `ChatHistory` persistence via Dapr's state store.
 
 ## Features
-
-This project framework provides the following features:
-
-* Feature 1
-* Feature 2
-* ...
 
 ## Getting Started
 
 ### Prerequisites
 
-(ideally very short, if any)
-
-- OS
-- Library version
-- ...
+- **Python 3.12+** – Ensure you have a compatible Python version.
+- **Azure Developer CLI** – To deploy and manage Azure resources.
+- **Dapr CLI** – To run the application locally.
 
 ### Installation
 
-(ideally very short)
+## License
 
-- npm install [package name]
-- mvn install
-- ...
+This project is open source. See the [LICENSE](LICENSE) file for details.
 
-### Quickstart
-(Add steps to get up and running quickly)
+```
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
-
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
-
-## Resources
-
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...
+```
