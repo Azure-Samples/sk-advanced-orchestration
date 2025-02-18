@@ -5,7 +5,7 @@ from semantic_kernel.connectors.ai import (
 )
 from semantic_kernel.functions import kernel_function, KernelArguments
 
-from basic_kernel import create_kernel
+from sk_ext.basic_kernel import create_kernel
 
 
 class TechnicalAgentPlugin:

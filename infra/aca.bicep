@@ -8,7 +8,7 @@ param applicationInsightsConnectionString string
 param containerRegistry string = '${prefix}acr${uniqueId}'
 param location string = resourceGroup().location
 param logAnalyticsWorkspaceName string
-param serviceBusNamespaceFqdn string
+// param serviceBusNamespaceFqdn string
 param cosmosDbEndpoint string
 param cosmosDbDatabaseName string
 param cosmosDbContainerName string
@@ -41,74 +41,74 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2023-11-02-preview' 
   }
 }
 
-resource daprPubSubAgents 'Microsoft.App/managedEnvironments/daprComponents@2024-10-02-preview' = {
-  name: 'workflow'
-  parent: containerAppEnv
-  properties: {
-    componentType: 'pubsub.azure.servicebus.topics'
-    version: 'v1'
-    scopes: [
-      'agents'
-    ]
-    metadata: [
-      {
-        // NOTE we don't wnat Dapr to manage the subscriptions
-        name: 'disableEntityManagement '
-        value: 'true'
-      }
-      {
-        name: 'consumerID'
-        value: 'workflow-input'
-      }
-      {
-        name: 'namespaceName'
-        value: serviceBusNamespaceFqdn
-      }
-      {
-        name: 'azureTenantId'
-        value: tenant().tenantId
-      }
-      {
-        name: 'azureClientId'
-        value: userAssignedIdentityClientId
-      }
-    ]
-  }
-}
-resource daprPubSubUI 'Microsoft.App/managedEnvironments/daprComponents@2024-10-02-preview' = {
-  name: 'ui'
-  parent: containerAppEnv
-  properties: {
-    componentType: 'pubsub.azure.servicebus.topics'
-    version: 'v1'
-    scopes: [
-      'ui'
-    ]
-    metadata: [
-      {
-        // NOTE we don't wnat Dapr to manage the subscriptions
-        name: 'disableEntityManagement '
-        value: 'true'
-      }
-      {
-        name: 'consumerID'
-        value: 'ui-updates'
-      }
-      {
-        name: 'namespaceName'
-        value: serviceBusNamespaceFqdn
-      }
-      {
-        name: 'azureTenantId'
-        value: tenant().tenantId
-      }
-      {
-        name: 'azureClientId'
-        value: userAssignedIdentityClientId
-      }
-    ]
-  }
-}
+// resource daprPubSubAgents 'Microsoft.App/managedEnvironments/daprComponents@2024-10-02-preview' = {
+//   name: 'workflow'
+//   parent: containerAppEnv
+//   properties: {
+//     componentType: 'pubsub.azure.servicebus.topics'
+//     version: 'v1'
+//     scopes: [
+//       'agents'
+//     ]
+//     metadata: [
+//       {
+//         // NOTE we don't wnat Dapr to manage the subscriptions
+//         name: 'disableEntityManagement '
+//         value: 'true'
+//       }
+//       {
+//         name: 'consumerID'
+//         value: 'workflow-input'
+//       }
+//       {
+//         name: 'namespaceName'
+//         value: serviceBusNamespaceFqdn
+//       }
+//       {
+//         name: 'azureTenantId'
+//         value: tenant().tenantId
+//       }
+//       {
+//         name: 'azureClientId'
+//         value: userAssignedIdentityClientId
+//       }
+//     ]
+//   }
+// }
+// resource daprPubSubUI 'Microsoft.App/managedEnvironments/daprComponents@2024-10-02-preview' = {
+//   name: 'ui'
+//   parent: containerAppEnv
+//   properties: {
+//     componentType: 'pubsub.azure.servicebus.topics'
+//     version: 'v1'
+//     scopes: [
+//       'ui'
+//     ]
+//     metadata: [
+//       {
+//         // NOTE we don't wnat Dapr to manage the subscriptions
+//         name: 'disableEntityManagement '
+//         value: 'true'
+//       }
+//       {
+//         name: 'consumerID'
+//         value: 'ui-updates'
+//       }
+//       {
+//         name: 'namespaceName'
+//         value: serviceBusNamespaceFqdn
+//       }
+//       {
+//         name: 'azureTenantId'
+//         value: tenant().tenantId
+//       }
+//       {
+//         name: 'azureClientId'
+//         value: userAssignedIdentityClientId
+//       }
+//     ]
+//   }
+// }
 
 resource cosmosDaprComponent 'Microsoft.App/managedEnvironments/daprComponents@2024-10-02-preview' = {
   name: 'state'
@@ -218,8 +218,8 @@ resource agentsContainerApp 'Microsoft.App/containerApps@2022-03-01' = {
             { name: 'AZURE_OPENAI_MODEL', value: 'gpt-4o' }
             { name: 'AZURE_OPENAI_API_KEY', value: '' }
             { name: 'AZURE_OPENAI_API_VERSION', value: '2024-08-01-preview' }
-            { name: 'PUBSUB_NAME', value: 'workflow' }
-            { name: 'TOPIC_NAME', value: 'events' }
+            // { name: 'PUBSUB_NAME', value: 'workflow' }
+            // { name: 'TOPIC_NAME', value: 'events' }
           ]
         }
       ]

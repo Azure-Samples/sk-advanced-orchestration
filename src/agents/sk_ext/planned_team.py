@@ -18,8 +18,8 @@ from semantic_kernel.functions.kernel_arguments import KernelArguments
 from semantic_kernel.agents.channels.agent_channel import AgentChannel
 from semantic_kernel.agents.channels.chat_history_channel import ChatHistoryChannel
 
-from feedback_strategy import FeedbackStrategy
-from planning_strategy import PlanningStrategy
+from sk_ext.feedback_strategy import FeedbackStrategy
+from sk_ext.planning_strategy import PlanningStrategy
 
 logger = logging.getLogger(__name__)
 

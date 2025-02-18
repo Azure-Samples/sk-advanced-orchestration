@@ -93,73 +93,73 @@ module cosmos 'cosmos.bicep' = {
   }
 }
 
-module sb 'br/public:avm/res/service-bus/namespace:0.11.2' = {
-  name: 'sb'
-  scope: rg
-  params: {
-    name: '${prefix}-sb-${uniqueId}'
-    topics: [
-      {
-        name: 'events'
-        requiresDuplicateDetection: false
-        subscriptions: [
-          {
-            name: 'dump' // For debugging purposes
-          }
-          {
-            name: 'approvals'
-            rules: [
-              {
-                name: 'approvals'
-                sqlFilter: {
-                  sqlExpression: 'source = \'approver_user\' and type = \'stop\''
-                }
-              }
-            ]
-          }
-          {
-            name: 'workflow-input'
-            rules: [
-              {
-                name: 'workflow-input'
-                sqlFilter: {
-                  sqlExpression: 'type = \'input\''
-                }
-              }
-            ]
-          }
-          {
-            name: 'ui-updates'
-            rules: [
-              {
-                name: 'ui-updates'
-                sqlFilter: {
-                  sqlExpression: 'type = \'update\''
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    roleAssignments: concat(
-      [
-        {
-          principalId: uami.outputs.principalId
-          principalType: 'ServicePrincipal'
-          roleDefinitionIdOrName: 'Azure Service Bus Data Owner'
-        }
-      ],
-      principalType == 'User' ? [
-        {
-          principalId: currentUserId
-          principalType: 'User'
-          roleDefinitionIdOrName: 'Azure Service Bus Data Owner'
-        }
-      ] : []
-    )
-  }
-}
+// module sb 'br/public:avm/res/service-bus/namespace:0.11.2' = {
+//   name: 'sb'
+//   scope: rg
+//   params: {
+//     name: '${prefix}-sb-${uniqueId}'
+//     topics: [
+//       {
+//         name: 'events'
+//         requiresDuplicateDetection: false
+//         subscriptions: [
+//           {
+//             name: 'dump' // For debugging purposes
+//           }
+//           {
+//             name: 'approvals'
+//             rules: [
+//               {
+//                 name: 'approvals'
+//                 sqlFilter: {
+//                   sqlExpression: 'source = \'approver_user\' and type = \'stop\''
+//                 }
+//               }
+//             ]
+//           }
+//           {
+//             name: 'workflow-input'
+//             rules: [
+//               {
+//                 name: 'workflow-input'
+//                 sqlFilter: {
+//                   sqlExpression: 'type = \'input\''
+//                 }
+//               }
+//             ]
+//           }
+//           {
+//             name: 'ui-updates'
+//             rules: [
+//               {
+//                 name: 'ui-updates'
+//                 sqlFilter: {
+//                   sqlExpression: 'type = \'update\''
+//                 }
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     ]
+//     roleAssignments: concat(
+//       [
+//         {
+//           principalId: uami.outputs.principalId
+//           principalType: 'ServicePrincipal'
+//           roleDefinitionIdOrName: 'Azure Service Bus Data Owner'
+//         }
+//       ],
+//       principalType == 'User' ? [
+//         {
+//           principalId: currentUserId
+//           principalType: 'User'
+//           roleDefinitionIdOrName: 'Azure Service Bus Data Owner'
+//         }
+//       ] : []
+//     )
+//   }
+// }
 
 
 // module logicapp './logicapp.bicep' = {
@@ -189,7 +189,7 @@ module aca './aca.bicep' = {
     applicationInsightsConnectionString: appin.outputs.applicationInsightsConnectionString
     openAiApiKey: '' // Force ManId, otherwise set openAI.listKeys().key1
     openAiEndpoint: openAI.outputs.openAIEndpoint
-    serviceBusNamespaceFqdn: '${sb.outputs.name}.servicebus.windows.net'
+    // serviceBusNamespaceFqdn: '${sb.outputs.name}.servicebus.windows.net'
     cosmosDbEndpoint: cosmos.outputs.cosmosDbEndpoint
     cosmosDbDatabaseName: cosmos.outputs.cosmosDbDatabase
     cosmosDbContainerName: cosmos.outputs.cosmosDbContainer

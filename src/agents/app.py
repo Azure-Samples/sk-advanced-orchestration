@@ -1,0 +1,58 @@
+import logging
+from dotenv import load_dotenv
+
+from sk_actor import SKAgentActor
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from dapr.ext.fastapi import DaprActor
+
+
+load_dotenv(override=True)
+# Configure logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+
+
+actor: DaprActor = None
+
+
+# Register actor when fastapi starts up
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Registering actor")
+    await actor.register_actor(SKAgentActor)
+    yield
+
+
+# Create fastapi and register dapr, and actors
+app = FastAPI(title="SK Agent Dapr Actors host", lifespan=lifespan)
+actor = DaprActor(app)
+
+# Future, for async communication over pubsub
+# PUBSUB_NAME = os.getenv("PUBSUB_NAME", "workflow")
+# TOPIC_NAME = os.getenv("TOPIC_NAME", "events")
+# dapr_app = DaprApp(app)
+# @dapr_app.subscribe(
+#     pubsub=PUBSUB_NAME,
+#     topic=TOPIC_NAME,
+# )
+# async def handle_workflow_input(req: Request):
+#     try:
+
+#         # Read fastapi request body as text
+#         body = await req.body()
+#         logger.info(f"Received workflow input: {body}")
+
+#         # Parse the body as a CloudEvent
+#         event = from_http(data=body, headers=req.headers)
+
+#         data = InputWorkflowEvent.model_validate(event.data)
+#         proxy: WorkflowActorInterface = ActorProxy.create(
+#             "WorkflowActor", ActorId(data.id), WorkflowActorInterface
+#         )
+#         await proxy.run(data.input)
+
+#         return {"status": "SUCCESS"}
+#     except Exception as e:
+#         logger.error(f"Error handling workflow input: {e}")
+#         return {"status": "DROP", "message": str(e)}

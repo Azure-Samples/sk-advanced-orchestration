@@ -1,16 +1,15 @@
-from speaker_election_strategy import SpeakerElectionStrategy
-from termination_strategy import UserInputRequiredTerminationStrategy
-from basic_kernel import create_kernel
-
 from telco.sales import sales_agent
 from telco.technical import technical_agent
 from telco.user import user_agent
 from telco.billing import billing_agent
-from team import Team
 
-from planning_strategy import DefaultPlanningStrategy
-from feedback_strategy import DefaultFeedbackStrategy
-from planned_team import PlannedTeam
+from sk_ext.speaker_election_strategy import SpeakerElectionStrategy
+from sk_ext.termination_strategy import UserInputRequiredTerminationStrategy
+from sk_ext.basic_kernel import create_kernel
+from sk_ext.team import Team
+from sk_ext.planning_strategy import DefaultPlanningStrategy
+from sk_ext.feedback_strategy import DefaultFeedbackStrategy
+from sk_ext.planned_team import PlannedTeam
 
 kernel = create_kernel()
 
@@ -23,7 +22,7 @@ planned_team = PlannedTeam(
     ),
     feedback_strategy=DefaultFeedbackStrategy(kernel=kernel),
 )
-team = Team(
+telco_team = Team(
     id="customer-support",
     description="Customer support team",
     agents=[user_agent, sales_agent, technical_agent, billing_agent, planned_team],

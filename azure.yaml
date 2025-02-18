@@ -2,27 +2,27 @@
 
 name: sk-agentic-callcenter
 services:
-    ui:
+    chat:
         project: src/chat
         host: containerapp
         language: python
         docker:
             path: chat.dockerfile
             remoteBuild: true
-    # agents:
-    #     project: src/agents
-    #     host: containerapp
-    #     language: python
-    #     docker:
-    #         path: agents.dockerfile
-    #         remoteBuild: true
+    agents:
+        project: src/agents
+        host: containerapp
+        language: python
+        docker:
+            path: agents.dockerfile
+            remoteBuild: true
 hooks:
     postprovision: 
         shell: pwsh
         run: |
             python -m venv .venv
             ./.venv/Scripts/Activate.ps1
-            pip install --upgrade pip
+            pip install uv
         interactive: true
         continueOnError: false
     # postdeploy: 
