@@ -1,6 +1,10 @@
 from typing import Annotated
 from semantic_kernel.agents import ChatCompletionAgent
-from semantic_kernel.functions import kernel_function
+from semantic_kernel.connectors.ai import (
+    FunctionChoiceBehavior,
+)
+from semantic_kernel.functions import kernel_function, KernelArguments
+
 from basic_kernel import create_kernel
 
 
@@ -63,14 +67,19 @@ class TechnicalAgentPlugin:
 
 technical_agent_kernel = create_kernel()
 
-technical_agent_kernel.add_plugin(TechnicalAgentPlugin, plugin_name="TechnicalAgent")
+technical_agent_kernel.add_plugin(TechnicalAgentPlugin(), plugin_name="TechnicalAgent")
 
+settings = technical_agent_kernel.get_prompt_execution_settings_from_service_id(
+    "default"
+)
+settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
 
 technical_agent = ChatCompletionAgent(
     description="A technical support agent that can answer technical questions",
     id="technical",
     name="TechnicalSupport",
     kernel=technical_agent_kernel,
+    arguments=KernelArguments(settings=settings),
     instructions="""You are a technical support agent that responds to customer inquiries.
     
     Your task are:

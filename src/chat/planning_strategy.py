@@ -117,6 +117,7 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
         input_prompt = prompt.format(
             agents=agents_info, inquiry=messages[-1]["content"], feedback=feedback
         )
+        logger.info(f"CreatePlan prompt: {input_prompt}")
         kfunc = KernelFunctionFromPrompt(
             function_name="CreatePlan", prompt=input_prompt
         )
@@ -126,7 +127,10 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
             execution_settings=execution_settings,
         )
         logger.info(f"CreatePlan: {result}")
-        parsed_result = TeamPlan.model_validate_json(result.value[0].content)
+        content = (
+            result.value[0].content.strip().replace("```json", "").replace("```", "")
+        )
+        parsed_result = TeamPlan.model_validate_json(content)
 
         return parsed_result
 
@@ -135,10 +139,11 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
         for agent in agents:
             tools = []
             if self.include_tools_descriptions:
-                for tool in agent.kernel.get_full_list_of_function_metadata():
+                agent_tools = agent.kernel.get_full_list_of_function_metadata()
+                for tool in agent_tools:
                     tool_name = tool.name
                     tool_description = tool.description
-                    tools.append(f"    - tool '{tool_name}': {tool_description}")
+                    tools.append(f"    - tool '{tool_name}': {tool_description or ''}")
             tools_str = "\n".join(tools)
 
             agent_info = f"- agent_id: {agent.id}\n    - description: {agent.description}\n{tools_str}\n\n"

@@ -64,6 +64,7 @@ class Team(Agent):
 
             async for is_visible, message in channel.invoke(selected_agent):
                 history.add_message(message)
+                logger.info(f"Agent {selected_agent.id} sent message: {message}")
                 if message.role == AuthorRole.ASSISTANT:
                     task = self.termination_strategy.should_terminate(
                         selected_agent, history.messages

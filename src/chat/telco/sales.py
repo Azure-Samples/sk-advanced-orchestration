@@ -4,6 +4,10 @@ import json
 from semantic_kernel.functions import kernel_function
 from basic_kernel import create_kernel
 from semantic_kernel.agents import ChatCompletionAgent
+from semantic_kernel.connectors.ai import (
+    FunctionChoiceBehavior,
+)
+from semantic_kernel.functions import kernel_function, KernelArguments
 
 
 class SalesAgentPlugin:
@@ -56,13 +60,17 @@ class SalesAgentPlugin:
 
 
 sales_agent_kernel = create_kernel()
-sales_agent_kernel.add_plugin(SalesAgentPlugin, plugin_name="SalesAgent")
+sales_agent_kernel.add_plugin(SalesAgentPlugin(), plugin_name="SalesAgent")
+
+settings = sales_agent_kernel.get_prompt_execution_settings_from_service_id("default")
+settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
 
 sales_agent = ChatCompletionAgent(
-    description="A sales agent that can answer sales questions, provide offers, and process sales requests",
+    description="A sales agent that can answer describe available offers",
     id="sales",
     name="Sales",
     kernel=sales_agent_kernel,
+    arguments=KernelArguments(settings=settings),
     instructions="""
 You are a sales person that responds to customer inquiries.
     

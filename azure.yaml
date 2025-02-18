@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: sk-agentic-callcenter
+services:
+    ui:
+        project: src/chat
+        host: containerapp
+        language: python
+        docker:
+            path: chat.dockerfile
+            remoteBuild: true
+    # agents:
+    #     project: src/agents
+    #     host: containerapp
+    #     language: python
+    #     docker:
+    #         path: agents.dockerfile
+    #         remoteBuild: true
+hooks:
+    postprovision: 
+        shell: pwsh
+        run: |
+            python -m venv .venv
+            ./.venv/Scripts/Activate.ps1
+            pip install --upgrade pip
+        interactive: true
+        continueOnError: false
+    # postdeploy: 
+    #     shell: pwsh
+    #     run: |            
+    #         cd src/agents && ../../.venv/scripts/python -m pip install -r requirements.txt
+    #         cd ../ui && ../../.venv/scripts/python -m pip install -r requirements.txt
+    #     interactive: true
+    #     continueOnError: false

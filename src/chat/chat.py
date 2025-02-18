@@ -6,43 +6,16 @@ import chainlit as cl
 
 from semantic_kernel.contents import ChatHistory
 
-from speaker_election_strategy import SpeakerElectionStrategy
-from termination_strategy import UserInputRequiredTerminationStrategy
-from basic_kernel import create_kernel
-
-from telco.sales import sales_agent
-from telco.technical import technical_agent
-from telco.user import user_agent
-from telco.billing import billing_agent
-from team import Team
-
-from planning_strategy import DefaultPlanningStrategy
-from feedback_strategy import DefaultFeedbackStrategy
-from planned_team import PlannedTeam
-
+from telco.telco_team import team
 import logging
+
+# import debugpy
+# # Start the debug server on port 5678
+# debugpy.listen(("localhost", 5678))
 
 logger = logging.getLogger(__name__)
 logging.getLogger("semantic_kernel").setLevel(logging.WARN)
-
-kernel = create_kernel()
-
-planned_team = PlannedTeam(
-    id="planned-team",
-    description="A stronger agent with more capabilities, can handle more complex queries that other agents can't single-handedly but requires more time to plan",
-    agents=[sales_agent, technical_agent, billing_agent],
-    planning_strategy=DefaultPlanningStrategy(
-        kernel=kernel, include_tools_descriptions=True
-    ),
-    feedback_strategy=DefaultFeedbackStrategy(kernel=kernel),
-)
-team = Team(
-    id="customer-support",
-    description="Customer support team",
-    agents=[user_agent, sales_agent, technical_agent, billing_agent, planned_team],
-    selection_strategy=SpeakerElectionStrategy(kernel=kernel),
-    termination_strategy=UserInputRequiredTerminationStrategy(stop_agents=[user_agent]),
-)
+logging.getLogger("chat").setLevel(logging.DEBUG)
 
 
 def create_history():
@@ -72,4 +45,3 @@ async def on_message(message: cl.Message):
             await cl.Message(content=result.content, author=result.name).send()
 
     cl.user_session.set("history", history)
-    # logger.info("\n".join([f"[{msg.name}]: {msg.content}" for msg in history.messages]))

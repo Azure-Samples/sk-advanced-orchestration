@@ -112,7 +112,10 @@ class SpeakerElectionStrategy(SelectionStrategy):
             execution_settings=execution_settings,
         )
         logger.info(f"SpeakerElectionStrategy: {result}")
-        parsed_result = AgentChoiceResponse.model_validate_json(result.value[0].content)
+        content = (
+            result.value[0].content.strip().replace("```json", "").replace("```", "")
+        )
+        parsed_result = AgentChoiceResponse.model_validate_json(content)
 
         return next(agent for agent in agents if agent.id == parsed_result.agent_id)
 
