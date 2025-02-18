@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="SK Agent Dapr Actors host", lifespan=lifespan)
 actor = DaprActor(app)
 
-
+# Future, for async communication over pubsub
 # PUBSUB_NAME = os.getenv("PUBSUB_NAME", "workflow")
 # TOPIC_NAME = os.getenv("TOPIC_NAME", "events")
 # dapr_app = DaprApp(app)
