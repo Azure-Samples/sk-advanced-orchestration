@@ -1,4 +1,3 @@
-# filepath: c:\Users\ricchi\Repos\mas-sk-quickstart\src\chat\telco\sales.py
 from typing import Annotated
 import json
 from semantic_kernel.functions import kernel_function
@@ -14,34 +13,40 @@ class SalesAgentPlugin:
     def __init__(self):
         # Offers data with internal fields (starting with '_') that should not be shared with the customer.
         self.offers = {
+            "All voice plan": {
+                "Description": "All voice plan for unlimited calls.",
+                "Price": "€10/month",
+                "Details": "Unlimited calls to all networks, 50GB data included, extra data €1/GB.",
+                "_SKU": "VOICE_ALL",
+            },
             "Mobile Internet": {
                 "Description": "Mobile WiFi for you to take anywhere, supports up to 10 devices.",
                 "Price": "€10/month",
-                "Details": "100GB data included, €1/GB after that.",
+                "Details": "100GB data included, €1/GB after that. 120 minutes of calls and 100 SMS.",
                 "_SKU": "INET_MOBILE",
             },
             "Large Data Plan": {
                 "Description": "High data plan for heavy users.",
                 "Price": "€20/month",
-                "Details": "250GB data included, €0.50/GB after that.",
+                "Details": "250GB data included, €0.50/GB after that. Unlimited calls and SMS.",
                 "_SKU": "INET_LARGE",
             },
             "Extra Large Data Plan": {
                 "Description": "Unlimited data plan for power users.",
                 "Price": "€50/month",
-                "Details": "Unlimited data at 4G speeds.",
+                "Details": "Unlimited data at 5G speeds. Unlimited calls and SMS.",
                 "_SKU": "INET_XLARGE",
             },
             "All-in-One Bundle": {
                 "Description": "Mobile internet and home internet in one package.",
                 "Price": "€45/month",
-                "Details": "10GB mobile data, €1/GB after that. Home internet included.",
+                "Details": "100GB mobile data, €1/GB after that. Home internet included.",
                 "_SKU": "INET_BUNDLE",
             },
             "Home Internet": {
                 "Description": "High-speed internet for your home.",
                 "Price": "€30/month",
-                "Details": "Unlimited data at 1Gbps.",
+                "Details": "Unlimited home data at 1Gbps.",
                 "_SKU": "INET_HOME",
             },
         }

@@ -1,0 +1,15 @@
+version: 1
+apps:
+  - appID: chat
+    appDirPath: src/chat
+    appProtocol: http
+    appPort: 5000
+    command: ["chainlit", "run", "--headless", "chat.py", "--port", "5000"]
+  - appID: agents
+    appDirPath: src/agents
+    resourcesPaths: 
+      - .dapr
+    appProtocol: http
+    appPort: 5001
+    appHealthCheckPath: "/healthz"
+    command: ["uvicorn", "app:app", "--port", "5001"]

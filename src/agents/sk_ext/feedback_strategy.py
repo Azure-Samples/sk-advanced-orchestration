@@ -6,6 +6,7 @@ from semantic_kernel.functions.kernel_arguments import KernelArguments
 from semantic_kernel.functions.kernel_function import KernelFunction
 from semantic_kernel.kernel_pydantic import KernelBaseModel
 from semantic_kernel.utils.experimental_decorator import experimental_class
+from semantic_kernel.contents.utils.author_role import AuthorRole
 
 if TYPE_CHECKING:
     from semantic_kernel.contents.chat_message_content import ChatMessageContent
@@ -59,6 +60,7 @@ class KernelFunctionFeedbackStrategy(FeedbackStrategy):
                 "name": message.name or "user",
             }
             for message in history
+            if message.role in [AuthorRole.USER, AuthorRole.ASSISTANT]
         ]
 
         # Invoke the function

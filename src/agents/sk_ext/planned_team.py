@@ -20,11 +20,26 @@ from semantic_kernel.agents.channels.chat_history_channel import ChatHistoryChan
 
 from sk_ext.feedback_strategy import FeedbackStrategy
 from sk_ext.planning_strategy import PlanningStrategy
+from sk_ext.merge_strategy import MergeHistoryStrategy
 
 logger = logging.getLogger(__name__)
 
 
 class PlannedTeam(Agent):
+    """A team of agents that execute a plan in a coordinated manner.
+
+    Args:
+        id (str): The id of the team.
+        description (str): The description of the team.
+        agents (list[Agent]): The agents that are part of the team.
+        planning_strategy (PlanningStrategy): The strategy used to define the execution plan.
+        feedback_strategy (FeedbackStrategy): The strategy used to provide feedback to the plan and reiterate if needed.
+        channel_type (type[AgentChannel], optional): The channel type used to communicate with the agents. Defaults to ChatHistoryChannel.
+        is_complete (bool, optional): Whether the team has completed its plan. Defaults to False.
+        fork_history (bool, optional): Whether to fork the history for each iteration. Defaults to False.
+        merge_strategy (MergeHistoryStrategy): The strategy used to merge the history after each iteration.
+    """
+
     id: str
     description: str
     agents: list[Agent]
@@ -32,6 +47,8 @@ class PlannedTeam(Agent):
     feedback_strategy: FeedbackStrategy
     channel_type: ClassVar[type[AgentChannel]] = ChatHistoryChannel
     is_complete: bool = False
+    fork_history: bool = False
+    merge_strategy: MergeHistoryStrategy = None
 
     @trace_agent_invocation
     async def invoke(
@@ -45,13 +62,21 @@ class PlannedTeam(Agent):
         self.is_complete = False
         feedback: str = ""
 
+        local_history = (
+            history
+            if not self.fork_history
+            else ChatHistory(
+                system_message=history.system_message, messages=history.messages.copy()
+            )
+        )
+
         # Channel required to communicate with agents
         channel = await self.create_channel()
-        await channel.receive(history.messages)
+        await channel.receive(local_history.messages)
 
         while not self.is_complete:
             plan = await self.planning_strategy.create_plan(
-                self.agents, history.messages, feedback
+                self.agents, local_history.messages, feedback
             )
 
             for step in plan.plan:
@@ -60,7 +85,7 @@ class PlannedTeam(Agent):
                     agent for agent in self.agents if agent.id == step.agent_id
                 )
                 # And add the step instructions to the history
-                history.add_message(
+                local_history.add_message(
                     ChatMessageContent(
                         role=AuthorRole.ASSISTANT,
                         name=self.id,
@@ -70,15 +95,24 @@ class PlannedTeam(Agent):
 
                 # Then invoke the agent
                 async for is_visible, message in channel.invoke(selected_agent):
-                    history.add_message(message)
+                    local_history.add_message(message)
 
-                    if is_visible:
+                    if is_visible and not self.fork_history:
                         yield message
 
             ok, feedback = await self.feedback_strategy.provide_feedback(
-                history.messages
+                local_history.messages
             )
             self.is_complete = ok
+
+        if self.fork_history:
+            logger.debug("Merging history after iteration")
+            delta = await self.merge_strategy.merge(
+                history.messages, local_history.messages
+            )
+
+            for d in delta:
+                yield d
 
     @trace_agent_invocation
     async def invoke_stream(

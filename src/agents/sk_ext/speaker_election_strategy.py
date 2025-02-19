@@ -14,6 +14,7 @@ from semantic_kernel.kernel_pydantic import KernelBaseModel
 from semantic_kernel.contents import ChatMessageContent
 from semantic_kernel.kernel import Kernel
 from semantic_kernel.agents import Agent
+from semantic_kernel.contents.utils.author_role import AuthorRole
 from semantic_kernel.functions import KernelFunctionFromPrompt
 from semantic_kernel.agents.strategies.selection.selection_strategy import (
     SelectionStrategy,
@@ -89,6 +90,7 @@ class SpeakerElectionStrategy(SelectionStrategy):
                 "name": message.name or "user",
             }
             for message in history
+            if message.role in [AuthorRole.USER, AuthorRole.ASSISTANT]
         ]
 
         agents_info = self._generate_agents_info(agents)

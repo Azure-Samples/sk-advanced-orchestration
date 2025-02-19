@@ -44,13 +44,13 @@ class BillingAgentPlugin:
         # New: Usage metrics for telco scenario (e.g., voice, data, sms)
         self.usage_metrics = {
             "12345": {
-                "voice_minutes": 20 * 8 * 60,
-                "data_usage_gb": 12.5,
+                "voice_minutes": 120,
+                "data_usage_gb": 200,
                 "sms": 100,
             },
             "67890": {
-                "voice_minutes": 120,
-                "data_usage_gb": 80.0,
+                "voice_minutes": 20 * 8 * 60,
+                "data_usage_gb": 50.0,
                 "sms": 50,
             },
         }

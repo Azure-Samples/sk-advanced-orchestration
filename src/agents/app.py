@@ -10,8 +10,23 @@ from dapr.ext.fastapi import DaprActor
 load_dotenv(override=True)
 # Configure logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARN)
+logging.getLogger("sk_ext").setLevel(logging.DEBUG)
 
+
+# Suppress health probe logs from the Uvicorn access logger
+class HealthProbeFilter(logging.Filter):
+    def filter(self, record):
+        # Suppress log messages containing the health probe request
+        return (
+            "/health" not in record.getMessage()
+            and "/healthz" not in record.getMessage()
+        )
+
+
+# Add the filter to the Uvicorn access logger
+uvicorn_access_logger = logging.getLogger("uvicorn.access")
+uvicorn_access_logger.addFilter(HealthProbeFilter())
 
 actor: DaprActor = None
 

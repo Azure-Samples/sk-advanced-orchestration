@@ -9,7 +9,12 @@ from sk_ext.basic_kernel import create_kernel
 from sk_ext.team import Team
 from sk_ext.planning_strategy import DefaultPlanningStrategy
 from sk_ext.feedback_strategy import DefaultFeedbackStrategy
+from sk_ext.merge_strategy import KernelFunctionMergeHistoryStrategy
 from sk_ext.planned_team import PlannedTeam
+
+from semantic_kernel.functions.kernel_function_from_prompt import (
+    KernelFunctionFromPrompt,
+)
 
 kernel = create_kernel()
 
@@ -21,6 +26,19 @@ planned_team = PlannedTeam(
         kernel=kernel, include_tools_descriptions=True
     ),
     feedback_strategy=DefaultFeedbackStrategy(kernel=kernel),
+    fork_history=True,
+    merge_strategy=KernelFunctionMergeHistoryStrategy(
+        kernel=kernel,
+        kernel_function=KernelFunctionFromPrompt(
+            function_name="merge_history",
+            prompt="""Summarize the following message to provide a single consolidated response.
+Output must in plain text or markdown format.
+
+# MESSAGES
+{{{{$messages}}}}
+""",
+        ),
+    ),
 )
 telco_team = Team(
     id="customer-support",
