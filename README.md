@@ -97,13 +97,23 @@ cd mas-sk-quickstart
 azd auth login --tenant-id <TENANT>.onmicrosoft.com
 
 azd up
+
+# When prompted, select
+# - Azure subscription to deploy to
+# - Azure region to deploy to
+# - Azure OpenAI resource and group to use
 ```
 
 ### Running Locally
 
-1. Ensure Docker is running.
-2. Init Dapr (once only): `dapr init`.
-3. Run the application: `dapr run -f dapr.yaml`
+1. `cp .env.example .env`
+2. Update `.env` with your Azure OpenAI resource endpoint
+3. Ensure Docker is running.
+4. Init Dapr (once only): `dapr init`.
+
+To run:
+
+`dapr run -f dapr.yaml`
 
 ## Contributing
 
