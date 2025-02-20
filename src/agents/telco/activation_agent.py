@@ -1,6 +1,5 @@
 # Assistant Agent - Purchase
 from pydantic import BaseModel, Field
-import os
 import logging
 
 from semantic_kernel.agents import ChatCompletionAgent
@@ -37,9 +36,6 @@ class ServiceActivationData(BaseModel):
     ]
 
 
-LOGIC_APPS_URL = os.getenv("LOGIC_APPS_URL")
-
-
 class ActivationAgentPlugin:
 
     @kernel_function
@@ -51,7 +47,8 @@ class ActivationAgentPlugin:
         logging.info(f"queue_service_activation{payload.model_dump_json(indent=2)}")
 
         try:
-            # requests.post(f"{LOGIC_APPS_URL}", json=payload.model_dump())
+            # Simulate queuing the activation
+            # In a real-world scenario, this would involve calling an external service
             return "OK"
         except Exception as e:
             return f"ERROR Failed to queue activation: {e}"
