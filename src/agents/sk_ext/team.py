@@ -28,6 +28,17 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class Team(Agent):
+    """
+    A team of agents that can work together to solve a problem.
+
+    Arguments:
+        id: The ID of the team.
+        description: The description of the team.
+        agents: The agents in the team.
+        selection_strategy: The strategy for selecting which agent to use.
+        termination_strategy: The strategy for determining when to stop the team.
+    """
+
     id: str
     description: str
     agents: list[Agent]

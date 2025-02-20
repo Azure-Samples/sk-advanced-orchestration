@@ -8,6 +8,7 @@ from dapr.ext.fastapi import DaprActor
 
 
 load_dotenv(override=True)
+
 # Configure logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARN)
@@ -15,6 +16,7 @@ logging.getLogger("sk_ext").setLevel(logging.DEBUG)
 
 
 # Suppress health probe logs from the Uvicorn access logger
+# Dapr runtime calls it frequently and pollutes the logs
 class HealthProbeFilter(logging.Filter):
     def filter(self, record):
         # Suppress log messages containing the health probe request
@@ -39,7 +41,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-# Create fastapi and register dapr, and actors
+# Create fastapi and register dapr and actors
 app = FastAPI(title="SK Agent Dapr Actors host", lifespan=lifespan)
 actor = DaprActor(app)
 

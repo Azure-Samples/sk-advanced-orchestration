@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlannedTeam(Agent):
-    """A team of agents that execute a plan in a coordinated manner.
+    """A team of agents that executes a plan in a coordinated manner.
 
     Args:
         id (str): The id of the team.
@@ -65,6 +65,7 @@ class PlannedTeam(Agent):
         local_history = (
             history
             if not self.fork_history
+            # When forking history, we need to create a new copy of ChatHistory
             else ChatHistory(
                 system_message=history.system_message, messages=history.messages.copy()
             )
@@ -75,6 +76,7 @@ class PlannedTeam(Agent):
         await channel.receive(local_history.messages)
 
         while not self.is_complete:
+            # Create a plan based on the current history and feedback (if any)
             plan = await self.planning_strategy.create_plan(
                 self.agents, local_history.messages, feedback
             )
@@ -98,19 +100,24 @@ class PlannedTeam(Agent):
                     local_history.add_message(message)
 
                     if is_visible and not self.fork_history:
+                        # If we are not forking history, we can yield the message
+                        # This prevents forked message to appear in the main history
                         yield message
 
+            # Provide feedback and check if the plan can complete
             ok, feedback = await self.feedback_strategy.provide_feedback(
                 local_history.messages
             )
             self.is_complete = ok
 
+        # Merge the history if needed
         if self.fork_history:
             logger.debug("Merging history after iteration")
             delta = await self.merge_strategy.merge(
                 history.messages, local_history.messages
             )
 
+            # Yield the merged history delta
             for d in delta:
                 yield d
 
@@ -126,13 +133,22 @@ class PlannedTeam(Agent):
         self.is_complete = False
         feedback: str = ""
 
+        local_history = (
+            history
+            if not self.fork_history
+            # When forking history, we need to create a new copy of ChatHistory
+            else ChatHistory(
+                system_message=history.system_message, messages=history.messages.copy()
+            )
+        )
+
         # Channel required to communicate with agents
         channel = await self.create_channel()
-        await channel.receive(history.messages)
+        await channel.receive(local_history.messages)
 
         while not self.is_complete:
             plan = await self.planning_strategy.create_plan(
-                self.agents, history.messages, feedback
+                self.agents, local_history.messages, feedback
             )
 
             for step in plan.plan:
@@ -149,13 +165,14 @@ class PlannedTeam(Agent):
 
                 messages: list[ChatMessageContent] = []
 
+                # TODO: when forking history, do we need to still yield intermediate messages?
                 async for message in channel.invoke_stream(selected_agent, messages):
                     yield message
 
                 for message in messages:
-                    history.messages.append(message)
+                    local_history.messages.append(message)
 
             ok, feedback = await self.feedback_strategy.provide_feedback(
-                history.messages
+                local_history.messages
             )
             self.is_complete = ok

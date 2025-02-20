@@ -11,6 +11,9 @@ token_provider = get_bearer_token_provider(
 )
 
 
+# NOTE: we use a function to create a new kernel instance,
+# so to allow each agent to have its own and be truly isolated
+# Of course, when hosted together agents may share a single instace
 def create_kernel(service_id: str = "default") -> Kernel:
     kernel = Kernel()
 

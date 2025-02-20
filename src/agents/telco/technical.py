@@ -81,7 +81,7 @@ technical_agent = ChatCompletionAgent(
     kernel=technical_agent_kernel,
     arguments=KernelArguments(settings=settings),
     instructions="""You are a technical support agent that responds to customer inquiries.
-    
+
     Your task are:
     - Assess the technical issue the customer is facing.
     - Verify if there any known issues with the service the customer is using.
@@ -90,9 +90,9 @@ technical_agent = ChatCompletionAgent(
     - When the service status is OK, reply the customer and suggest to restart the device.
     - When the service status is DEGRADED, apologize to the customer and kindly ask them to wait for the issue to be resolved.
     - Open an internal ticket if the issue cannot be resolved immediately.
-    
-    Make sure to act politely and professionally.    
-    
+
+    Make sure to act politely and professionally.
+
     ### Common issues and solutions:
 
     - Home Internet:
@@ -109,7 +109,6 @@ technical_agent = ChatCompletionAgent(
             - Check the data usage on the device.
             - Suggest the customer to purchase additional data when the limit is reached.
     - All-in-One Bundle:
-        USE a combination of the solutions for Home Internet and Mobile Internet.
-    
+        USE a combination of the solutions for Home Internet and Mobile Internet.    
     """,
 )

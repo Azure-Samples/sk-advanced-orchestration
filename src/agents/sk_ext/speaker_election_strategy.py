@@ -64,18 +64,40 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
         """
 
 
+class LastNMessagesHistoryReducer(ChatHistoryReducer):
+    target_count: int = 3
+
+    @override
+    async def reduce(self) -> ChatHistoryReducer | None:
+        # Filter out messages with role == AuthorRole.TOOL
+        filtered_messages = [
+            msg for msg in self.messages if msg.role != AuthorRole.TOOL
+        ]
+        if len(filtered_messages) <= self.target_count:
+            self.messages = filtered_messages
+            return None
+        self.messages = filtered_messages[-self.target_count :]
+        return self
+
+
 class SpeakerElectionStrategy(SelectionStrategy):
+    """
+    An evolved version of the SelectionStrategy that uses agents descriptions
+    and available tools (optiona) to determine the next best speaker in the conversation.
+    """
 
     kernel: Kernel
-    history_reducer: ChatHistoryReducer | None = None
+    history_reducer: ChatHistoryReducer | None = LastNMessagesHistoryReducer()
     include_tools_descriptions: bool = (False,)
-    allowed_transitions: dict["Agent", list["Agent"]] | None = (None,)
+    allowed_transitions: dict["Agent", list["Agent"]] | None = None
 
     @override
     async def select_agent(
         self, agents: list["Agent"], history: list[ChatMessageContent]
     ) -> "Agent":
 
+        # Reduce the history if needed
+        # By default, we will use the last 3 messages to avoid overloading the model
         if self.history_reducer is not None:
             self.history_reducer.messages = history
             reduced_history = await self.history_reducer.reduce()
@@ -90,6 +112,7 @@ class SpeakerElectionStrategy(SelectionStrategy):
                 "name": message.name or "user",
             }
             for message in history
+            # For selection strategy, we only need messages from user and assistant
             if message.role in [AuthorRole.USER, AuthorRole.ASSISTANT]
         ]
 
@@ -101,7 +124,8 @@ class SpeakerElectionStrategy(SelectionStrategy):
         arguments["history"] = messages
 
         execution_settings = {}
-        # https://devblogs.microsoft.com/semantic-kernel/using-json-schema-for-structured-output-in-python-for-openai-models/
+        # See https://devblogs.microsoft.com/semantic-kernel/using-json-schema-for-structured-output-in-python-for-openai-models/
+        # We're using a custom format to make sure we get also the reason for the selection
         execution_settings["response_format"] = AgentChoiceResponse
 
         input_prompt = prompt.format(agents=agents_info, history=messages)
@@ -115,13 +139,25 @@ class SpeakerElectionStrategy(SelectionStrategy):
         )
         logger.info(f"SpeakerElectionStrategy: {result}")
         content = (
-            result.value[0].content.strip().replace("```json", "").replace("```", "")
+            # Strip markdown formatting if present
+            result.value[0]
+            .content.strip()
+            .replace("```json", "")
+            .replace("```", "")
         )
         parsed_result = AgentChoiceResponse.model_validate_json(content)
 
         return next(agent for agent in agents if agent.id == parsed_result.agent_id)
 
     def _generate_agents_info(self, agents: list["Agent"]) -> str:
+        """
+        Generate the agents info string to be used in the prompt. This includes
+        the agent's ID and description, tools and allowed transitions if provided.
+
+        :param agents: List of agents to be used in the prompt.
+
+        :return: The agents info string.
+        """
         agents_info = []
         for agent in agents:
             tools = []

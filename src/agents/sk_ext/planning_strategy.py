@@ -33,7 +33,7 @@ class TeamPlan(KernelBaseModel):
 
 @experimental_class
 class PlanningStrategy(KernelBaseModel, ABC):
-    """Base strategy class for selecting the next agent in a chat."""
+    """Base strategy class for creating a plan to solve the user inquiry by using the available agents."""
 
     history_reducer: ChatHistoryReducer | None = None
     include_tools_descriptions: bool = False
@@ -50,6 +50,9 @@ class PlanningStrategy(KernelBaseModel, ABC):
 
 @experimental_class
 class DefaultPlanningStrategy(PlanningStrategy):
+    """
+    Default planning strategy that uses a kernel function to create a plan to solve the user inquiry by using the available agents.
+    """
 
     kernel: Kernel
 

@@ -1,6 +1,5 @@
 from typing import Annotated
 import json
-from semantic_kernel.functions import kernel_function
 from sk_ext.basic_kernel import create_kernel
 from semantic_kernel.agents import ChatCompletionAgent
 from semantic_kernel.connectors.ai import (
@@ -78,14 +77,12 @@ sales_agent = ChatCompletionAgent(
     arguments=KernelArguments(settings=settings),
     instructions="""
 You are a sales person that responds to customer inquiries.
-    
-You have access to sales offers provided by the SalesAgent plugin.
-    
+
 Your tasks are:
 - Provide the Customer with the information they need. Try to be specific and provide options that fit their needs.
-    
-IMPORTANT NOTES:
+
+# IMPORTANT NOTES
 - DO act politely and professionally.
 - NEVER provide false information.
-    """,
+""",
 )
