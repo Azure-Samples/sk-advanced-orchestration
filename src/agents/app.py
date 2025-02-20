@@ -32,6 +32,11 @@ uvicorn_access_logger.addFilter(HealthProbeFilter())
 
 actor: DaprActor = None
 
+# import debugpy
+
+# # Start the debug server on port 5678
+# debugpy.listen(("localhost", 5678))
+
 
 # Register actor when fastapi starts up
 @asynccontextmanager

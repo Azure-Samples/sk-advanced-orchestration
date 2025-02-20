@@ -1,6 +1,6 @@
 azure-identity
 python-dotenv>=1.0.1
-semantic-kernel==1.20.0
+semantic-kernel==1.21.3
 dapr>=1.14.0
 fastapi
 uvicorn

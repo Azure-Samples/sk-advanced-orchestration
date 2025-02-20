@@ -65,7 +65,11 @@ class SKAgentActor(Actor, SKAgentActorInterface):
                 results.append(result.model_dump())
 
             logger.debug(f"Saving conversation state for actor {self.id}")
-            await self._state_manager.set_state("history", self.history.model_dump())
+
+            # Fix to avoid ChatHistory serialization issue
+            dumped_history = remove_metadata(self.history.model_dump(), "arguments")
+
+            await self._state_manager.set_state("history", dumped_history)
             await self._state_manager.save_state()
             logger.info(f"State saved successfully for actor {self.id}")
 
@@ -75,3 +79,12 @@ class SKAgentActor(Actor, SKAgentActorInterface):
                 f"Error occurred in invoke for actor {self.id}: {e}", exc_info=True
             )
             raise
+
+
+def remove_metadata(data, key: str):
+    if isinstance(data, dict):
+        return {k: remove_metadata(v) for k, v in data.items() if k != key}
+    elif isinstance(data, list):
+        return [remove_metadata(item) for item in data]
+    else:
+        return data
