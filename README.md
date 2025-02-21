@@ -1,13 +1,16 @@
 # Semantic Kernel Advanced Customer Support
 
-This repo contains a sample customer support application that uses [Semantic Kernel](https://github.com/microsoft/semantic-kernel) Agents levering an improved [`SelectionStrategy`](src/agents/sk_ext/speaker_election_strategy.py) that accounts for agents descriptions and available tools to provide a more accurate selection (including the reason for it for traceability).
+This repo showcases a sample AI-enabled customer support application that leverages [Semantic Kernel](https://github.com/microsoft/semantic-kernel) Agents boosted with:
 
-It also features _nested orchestration_ via [`Teams`](src/agents/sk_ext/team.py) and `Agents` for more complex, hierarchical routing scenarios.
+- an improved [`SelectionStrategy`](src/agents/sk_ext/speaker_election_strategy.py) that accounts for agents descriptions and available tools to provide a more accurate selection (including the reason for it for traceability).
+- _nested orchestration_ via [`Teams`](src/agents/sk_ext/team.py) and `Agents` for more complex, hierarchical routing scenarios.
+- a special type of `Agent` named [`PlannedTeam`](src/agents/sk_ext/planned_team.py), which can handle more complex, cross-agent asks turning them into a multi-step process automatically.
 
-It also includes a special kind of
-`Agent` that constructs a [`PlannedTeam`](src/agents/sk_ext/planned_team.py) where more complex asks are turned into a multi-step process.
+Additionally, the application leverages [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/) and [Dapr](https://dapr.io) to enable the [_Virtual Actor pattern_](https://docs.dapr.io/developing-applications/building-blocks/actors/actors-overview/) for agentic teams and natively handle `ChatHistory` persistence via Dapr's [state store](https://docs.dapr.io/developing-applications/building-blocks/state-management/), ensuring that the application can scale seamlessly.
 
 ## Example
+
+In this case, the user asks a question that requires the involvement of multiple agents, which are able to collaborate and produce a composite answer.
 
 ![Example chat demonstrating agents producing a composite answer](image.png)
 
