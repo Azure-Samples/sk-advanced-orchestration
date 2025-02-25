@@ -6,13 +6,18 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from dapr.ext.fastapi import DaprActor
 
-
 load_dotenv(override=True)
 
 # Configure logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARN)
 logging.getLogger("sk_ext").setLevel(logging.DEBUG)
+
+import tracing
+
+tracing.set_up_logging()
+tracing.set_up_tracing()
+tracing.set_up_metrics()
 
 
 # Suppress health probe logs from the Uvicorn access logger

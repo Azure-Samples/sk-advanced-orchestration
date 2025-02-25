@@ -14,6 +14,16 @@ In this case, the user asks a question that requires the involvement of multiple
 
 ![Example chat demonstrating agents producing a composite answer](image.png)
 
+## Telemetry and explanability example
+
+### Waterfall chart of agentic team steps and results
+
+![Exaple waterfall chart of agentic team steps and results](telemetry.png)
+
+### Additional debug information provided by the improved `SelectionStrategy`:
+
+![alt text](telemetry_details.png)
+
 ## Architecture
 
 The overall architecture involves [Dapr](https://dapr.io) to enable the [_Virtual Actor pattern_](https://docs.dapr.io/developing-applications/building-blocks/actors/actors-overview/), in order to host the agentic team and natively handle `ChatHistory` persistence via Dapr's [state store](https://docs.dapr.io/developing-applications/building-blocks/state-management/).

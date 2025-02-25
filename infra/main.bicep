@@ -202,10 +202,10 @@ module aca './aca.bicep' = {
 // These outputs are copied by azd to .azure/<env name>/.env file
 // post provision script will use these values, too
 output AZURE_RESOURCE_GROUP string = rg.name
+output APPLICATIONINSIGHTS_CONNECTIONSTRING string = appin.outputs.applicationInsightsConnectionString
 output AZURE_TENANT_ID string = subscription().tenantId
 output AZURE_USER_ASSIGNED_IDENTITY_ID string = uami.outputs.identityId
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acrModule.outputs.acrEndpoint
 output AZURE_OPENAI_MODEL string = openAIModel
 output AZURE_OPENAI_ENDPOINT string = openAI.outputs.openAIEndpoint
 output AZURE_OPENAI_API_VERSION string = openAIApiVersion
-output AZURE_OPENAI_WHISPER_ENDPOINT string = openAI.outputs.openAIEndpoint

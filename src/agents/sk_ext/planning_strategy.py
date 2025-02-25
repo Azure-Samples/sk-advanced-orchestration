@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
 import logging
+from opentelemetry import trace
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +135,10 @@ BE SURE TO READ AGAIN THE INSTUCTIONS ABOVE BEFORE PROCEEDING.
             result.value[0].content.strip().replace("```json", "").replace("```", "")
         )
         parsed_result = TeamPlan.model_validate_json(content)
+
+        # Add custom metadata to the current OpenTelemetry span
+        span = trace.get_current_span()
+        span.set_attribute("gen_ai.plannedteam.plan", parsed_result.model_dump_json())
 
         return parsed_result
 

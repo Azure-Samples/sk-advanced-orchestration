@@ -6,6 +6,7 @@ from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
 from sk_ext.team import Team
 from telco.telco_team import telco_team
+from opentelemetry import trace
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)  # Ensure logging level is set as required
@@ -53,32 +54,40 @@ class SKAgentActor(Actor, SKAgentActorInterface):
         return self.history.model_dump()
 
     async def invoke(self, input_message: str) -> list[ChatMessageContent]:
-        try:
-            logger.info(f"Invoking actor {self.id} with input message: {input_message}")
-            self.history.add_user_message(input_message)
-            results = []
+        tracer = trace.get_tracer(__name__)
+        with tracer.start_as_current_span("sk_actor.invoke") as span:
+            span.set_attribute("operation_Id", self.id)
+            try:
+                # Option 1: Add as baggage so that it propagates with the context.
+                # baggage.set_baggage("operation_Id", self.id)
 
-            async for result in self.agent.invoke(history=self.history):
-                logger.debug(
-                    f"Received result from agent for actor {self.id}: {result}"
+                logger.info(
+                    f"Invoking actor {self.id} with input message: {input_message}"
                 )
-                results.append(result.model_dump())
+                self.history.add_user_message(input_message)
+                results = []
 
-            logger.debug(f"Saving conversation state for actor {self.id}")
+                async for result in self.agent.invoke(history=self.history):
+                    logger.debug(
+                        f"Received result from agent for actor {self.id}: {result}"
+                    )
+                    results.append(result.model_dump())
 
-            # Fix to avoid ChatHistory serialization issue
-            dumped_history = remove_metadata(self.history.model_dump(), "arguments")
+                logger.debug(f"Saving conversation state for actor {self.id}")
 
-            await self._state_manager.set_state("history", dumped_history)
-            await self._state_manager.save_state()
-            logger.info(f"State saved successfully for actor {self.id}")
+                # Fix to avoid ChatHistory serialization issue
+                dumped_history = remove_metadata(self.history.model_dump(), "arguments")
 
-            return results
-        except Exception as e:
-            logger.error(
-                f"Error occurred in invoke for actor {self.id}: {e}", exc_info=True
-            )
-            raise
+                await self._state_manager.set_state("history", dumped_history)
+                await self._state_manager.save_state()
+                logger.info(f"State saved successfully for actor {self.id}")
+
+                return results
+            except Exception as e:
+                logger.error(
+                    f"Error occurred in invoke for actor {self.id}: {e}", exc_info=True
+                )
+                raise
 
 
 def remove_metadata(data, key: str):

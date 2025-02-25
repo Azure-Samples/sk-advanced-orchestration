@@ -20,6 +20,7 @@ from semantic_kernel.agents.strategies.selection.selection_strategy import (
     SelectionStrategy,
 )
 import logging
+from opentelemetry import trace
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +147,11 @@ class SpeakerElectionStrategy(SelectionStrategy):
             .replace("```", "")
         )
         parsed_result = AgentChoiceResponse.model_validate_json(content)
+
+        # Add custom metadata to the current OpenTelemetry span
+        span = trace.get_current_span()
+        span.set_attribute("gen_ai.team.choice", parsed_result.agent_id)
+        span.set_attribute("gen_ai.team.choice_reason", parsed_result.reason)
 
         return next(agent for agent in agents if agent.id == parsed_result.agent_id)
 

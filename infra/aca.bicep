@@ -214,6 +214,7 @@ resource agentsContainerApp 'Microsoft.App/containerApps@2022-03-01' = {
             // https://learn.microsoft.com/en-us/answers/questions/1225865/unable-to-get-a-user-assigned-managed-identity-wor
             { name: 'AZURE_CLIENT_ID', value: userAssignedIdentityClientId }
             { name: 'APPLICATIONINSIGHTS_CONNECTIONSTRING', value: applicationInsightsConnectionString }
+            { name: 'APPLICATIONINSIGHTS_SERVICE_NAME', value: 'agents' }
             { name: 'AZURE_OPENAI_ENDPOINT', value: openAiEndpoint }
             { name: 'AZURE_OPENAI_MODEL', value: 'gpt-4o' }
             { name: 'AZURE_OPENAI_API_KEY', value: '' }

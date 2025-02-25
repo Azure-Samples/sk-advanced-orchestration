@@ -20,6 +20,7 @@ kernel = create_kernel()
 
 planned_team = PlannedTeam(
     id="planned-team",
+    name="planned-team",
     description="A special agent that can handle more complex asks by orchestrating multiple agents. Useful when user asks spans multiple domains.",
     agents=[sales_agent, technical_agent, billing_agent],
     planning_strategy=DefaultPlanningStrategy(
@@ -42,6 +43,7 @@ Output must in plain text or markdown format.
 )
 telco_team = Team(
     id="customer-support",
+    name="customer-support",
     description="Customer support team",
     agents=[user_agent, sales_agent, technical_agent, billing_agent, planned_team],
     selection_strategy=SpeakerElectionStrategy(kernel=kernel),

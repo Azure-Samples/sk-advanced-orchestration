@@ -5,3 +5,4 @@ dapr>=1.14.0
 fastapi
 uvicorn
 dapr-ext-fastapi>=1.14.0
+azure-monitor-opentelemetry-exporter>=1.0.0b33
