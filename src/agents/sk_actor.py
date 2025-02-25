@@ -83,8 +83,8 @@ class SKAgentActor(Actor, SKAgentActorInterface):
 
 def remove_metadata(data, key: str):
     if isinstance(data, dict):
-        return {k: remove_metadata(v) for k, v in data.items() if k != key}
+        return {k: remove_metadata(v, key) for k, v in data.items() if k != key}
     elif isinstance(data, list):
-        return [remove_metadata(item) for item in data]
+        return [remove_metadata(item, key) for item in data]
     else:
         return data
