@@ -5,6 +5,7 @@ This repo showcases a sample AI-enabled customer support application that levera
 - an improved [`SelectionStrategy`](src/agents/sk_ext/speaker_election_strategy.py) that accounts for agents descriptions and available tools to provide a more accurate selection (including the reason for it for traceability).
 - _nested orchestration_ via [`Teams`](src/agents/sk_ext/team.py) and `Agents` for more complex, hierarchical routing scenarios.
 - a special type of `Agent` named [`PlannedTeam`](src/agents/sk_ext/planned_team.py), which can handle more complex, cross-agent asks turning them into a multi-step process automatically.
+- improved telemetry and explainability via [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) to track agentic team steps and results, as well as the reasoning behind agent selection.
 
 Additionally, the application leverages [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/) and [Dapr](https://dapr.io) to enable the [_Virtual Actor pattern_](https://docs.dapr.io/developing-applications/building-blocks/actors/actors-overview/) for agentic teams and natively handle `ChatHistory` persistence via Dapr's [state store](https://docs.dapr.io/developing-applications/building-blocks/state-management/), ensuring that the application can scale seamlessly.
 
