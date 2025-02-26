@@ -17,13 +17,19 @@ In this case, the user asks a question that requires the involvement of multiple
 
 ## Telemetry and explanability example
 
-### Waterfall chart of agentic team steps and results
+### Waterfall chart of agentic team steps (Application Insights)
 
 ![Exaple waterfall chart of agentic team steps and results](telemetry.png)
 
 ### Additional debug information provided by the improved `SelectionStrategy`:
 
 ![alt text](telemetry_details.png)
+
+### Azure AI Foundry tracing
+
+See [official documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/tracing) for more details.
+
+![alt text](ai-foundry-tracing.png)
 
 ## Architecture
 
