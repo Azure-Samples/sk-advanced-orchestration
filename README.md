@@ -127,9 +127,23 @@ azd up
 ### Running Locally
 
 1. `cp .env.example .env`
-2. Update `.env` with your Azure OpenAI resource endpoint
+2. Update `.env` with your Azure OpenAI resource endpoint.
 3. Ensure Docker is running.
 4. Init Dapr (once only): `dapr init`.
+5. Setup Python environment and install dependencies:
+
+```bash
+python -m venv .venv
+
+# On macOS/Linux:
+source .venv/bin/activate
+
+# On Windows:
+.venv\Scripts\Activate.ps1
+
+pip install -r src/chat/requirements.txt
+pip install -r src/agents/requirements.txt
+```
 
 To run:
 
