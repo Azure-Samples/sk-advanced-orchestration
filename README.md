@@ -129,6 +129,10 @@ azd up
 
 ### Running Locally
 
+> [!TIP]
+> If you deployed the application to Azure, you can run it locally using the same Azure resources.
+> Simply copy the `.env` file from the `.azure/<env name>` folder to the root of the repo.
+
 1. `cp .env.example .env`
 2. Update `.env` with your Azure OpenAI resource endpoint.
 3. Ensure Docker is running.
