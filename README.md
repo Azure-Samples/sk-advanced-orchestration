@@ -112,6 +112,9 @@ cd mas-sk-quickstart
 
 ### Azure Deployment
 
+> [!NOTE]
+> Script will **NOT** create a new Azure OpenAI resource. You will need to have an existing one with a deployed model.
+
 ```bash
 # Login to Azure if required
 azd auth login --tenant-id <TENANT>.onmicrosoft.com
