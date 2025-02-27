@@ -121,7 +121,7 @@ azd up
 # When prompted, select
 # - Azure subscription to deploy to
 # - Azure region to deploy to
-# - Azure OpenAI resource and group to use
+# - EXISTING Azure OpenAI resource and group to use (azd will NOT create a new one)
 ```
 
 ### Running Locally
