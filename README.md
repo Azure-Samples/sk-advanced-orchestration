@@ -1,5 +1,5 @@
 > [!IMPORTANT]
-> We are consolidating all Semantic Kernel samples into a [single repository](https://github.com/Azure-Samples/semantic-kernel-advanced-usage/). This repository will be archived in the future.
+> We are consolidating all Semantic Kernel advanced usage samples into a [single repository](https://github.com/Azure-Samples/semantic-kernel-advanced-usage/). This repository will be archived in the future.
 
 # Semantic Kernel Advanced Customer Support
 
