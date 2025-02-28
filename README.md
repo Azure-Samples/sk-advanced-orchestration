@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> We are consolidating all Semantic Kernel samples into a [single repository](https://github.com/Azure-Samples/semantic-kernel-advanced-usage/). This repository will be archived in the future.
+
 # Semantic Kernel Advanced Customer Support
 
 This repo showcases a sample AI-enabled customer support application that leverages [Semantic Kernel](https://github.com/microsoft/semantic-kernel) Agents boosted with:
